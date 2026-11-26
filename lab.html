@@ -7,6 +7,7 @@
 <meta name="description" content="POLY — полевая лаборатория океанической робототехники. Процедурная модель Medusa JF-4: 8 рук, 224 звена, оптика и сифон в одном интерактивном симуляторе.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script>
 if (location.search.indexOf('embed=1') > -1) document.documentElement.classList.add('embed');
@@ -165,19 +166,19 @@ html.embed .hud{display:none}
 html.embed #gl{cursor:grab;touch-action:none}
 html.embed .embed-ui{
   display:block;position:absolute;inset:0;z-index:4;pointer-events:none;
-  font-family:'JetBrains Mono',monospace;color:var(--ink);text-transform:uppercase;
+  font-family:'JetBrains Mono',monospace;color:#eaf7ff;text-transform:uppercase;
 }
-.eu-top{position:absolute;left:22px;top:20px;display:flex;align-items:center;gap:9px;font-size:9px;letter-spacing:.16em;color:var(--mid)}
-.eu-top b{color:var(--ink);font-weight:600}
-.eu-dot{width:5px;height:5px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 4px rgba(47,99,255,.12)}
-.eu-right{position:absolute;right:22px;top:20px;text-align:right;font-size:8px;letter-spacing:.16em;color:var(--faint);line-height:1.8}
-.eu-right b{color:var(--teal);font-weight:600}
+.eu-top{position:absolute;left:22px;top:20px;display:flex;align-items:center;gap:9px;font-size:9px;letter-spacing:.16em;color:rgba(234,247,255,.55)}
+.eu-top b{color:#fff;font-weight:600}
+.eu-dot{width:5px;height:5px;border-radius:50%;background:var(--aqua);box-shadow:0 0 0 4px rgba(70,201,191,.14)}
+.eu-right{position:absolute;right:22px;top:20px;text-align:right;font-size:8px;letter-spacing:.16em;color:rgba(234,247,255,.46);line-height:1.8}
+.eu-right b{color:var(--aqua);font-weight:600}
 .eu-bottom{position:absolute;left:22px;right:22px;bottom:24px;display:flex;justify-content:space-between;align-items:flex-end;gap:18px}
-.eu-bottom .k{font-size:7.5px;letter-spacing:.2em;color:var(--faint)}
-.eu-bottom .v{font:600 13px/1.1 Inter,sans-serif;letter-spacing:.04em;color:var(--ink);margin-top:4px}
-.eu-bottom .s{font-size:8px;letter-spacing:.1em;color:var(--mid);margin-top:3px}
-.eu-bar{position:absolute;left:22px;right:22px;bottom:9px;height:1px;background:rgba(14,58,61,.16)}
-.eu-bar i{display:block;height:100%;width:0;background:var(--coral);transition:width .1s linear}
+.eu-bottom .k{font-size:7.5px;letter-spacing:.2em;color:rgba(234,247,255,.44)}
+.eu-bottom .v{font:600 13px/1.1 Inter,sans-serif;letter-spacing:.04em;color:#fff;margin-top:4px}
+.eu-bottom .s{font-size:8px;letter-spacing:.1em;color:rgba(234,247,255,.55);margin-top:3px}
+.eu-bar{position:absolute;left:22px;right:22px;bottom:9px;height:1px;background:rgba(255,255,255,.18)}
+.eu-bar i{display:block;height:100%;width:0;background:var(--aqua);transition:width .1s linear}
 @media (max-width:620px){
   html.embed{font-size:11px}
   .eu-top{left:16px;top:16px;font-size:8px}
@@ -328,13 +329,13 @@ const secAt = t => { let s = SECT[0]; for (const x of SECT) if (t >= x.t) s = x;
 /* ---------- renderer ---------- */
 const canvas = $('gl');
 const COARSE = matchMedia('(pointer: coarse)').matches;
-const DPR_MAX = COARSE ? 1.35 : 1.5;
+const DPR_MAX = COARSE ? 1 : (EMBED ? 1.25 : 1.4);
 const renderer = new THREE.WebGLRenderer({canvas, antialias:!COARSE, alpha:true, powerPreference:'high-performance'});
 renderer.setClearColor(0, 0);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NeutralToneMapping;
 renderer.toneMappingExposure = 1.02;
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled = !COARSE;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
 const pmrem = new THREE.PMREMGenerator(renderer);
@@ -345,7 +346,7 @@ const camera = new THREE.PerspectiveCamera(26, 1, .1, 120);
 const key = new THREE.DirectionalLight(0xffffff, 2.3);
 key.position.set(5, 11, 8);
 key.castShadow = true;
-key.shadow.mapSize.set(1024, 1024);
+key.shadow.mapSize.set(EMBED ? 512 : 1024, EMBED ? 512 : 1024);
 Object.assign(key.shadow.camera, {left:-8, right:8, top:8, bottom:-8, near:1, far:40});
 key.shadow.bias = -.0006; key.shadow.normalBias = .02; key.shadow.radius = 5;
 scene.add(key, key.target);
@@ -548,7 +549,7 @@ function poseArms(S, t) {
 const armMark = new THREE.Object3D(); jf.add(armMark); anchors.armLink = armMark;
 
 /* ---------- wake + stage ---------- */
-const BUB = 64;
+const BUB = EMBED ? 36 : 56;
 const bubMat = new THREE.MeshPhysicalMaterial({color:0xffffff, roughness:.1, transparent:true, opacity:.5, envMapIntensity:1.6});
 const bubbles = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 12, 10), bubMat, BUB);
 bubbles.frustumCulled = false; bubbles.renderOrder = 6; scene.add(bubbles);
@@ -633,7 +634,7 @@ function drawChart(t) {
 }
 
 /* ---------- layout ---------- */
-let W = 1, H_ = 1;
+let W = 1, H_ = 1, remPx = 16;
 function resize() {
   W = canvas.clientWidth || window.innerWidth;
   H_ = canvas.clientHeight || window.innerHeight;
@@ -641,6 +642,7 @@ function resize() {
   renderer.setSize(W, H_, false);
   camera.aspect = W / H_; camera.updateProjectionMatrix();
   leaders.setAttribute('viewBox', `0 0 ${W} ${H_}`);
+  remPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 }
 addEventListener('resize', resize); resize();
 
@@ -731,6 +733,14 @@ function apply(t, wall) {
 
 function hud(t) {
   if (!lastSec) return;
+  if (EMBED) {
+    if (euMode) {
+      euMode.textContent = lastSec.m;
+      euSub.textContent = lastSec.s;
+      euBar.style.width = (t / DUR * 100) + '%';
+    }
+    return;
+  }
   const sec = lastSec, jet = S.jet, p = pressure(t), kpa = Math.round(p), load = clamp(.12 + jet * (.25 + beat(t) * .72) + S.expl * .02);
   setTxt($('kpa'), String(kpa).padStart(2, '0'));
   setTxt($('thr'), String(Math.round(6 + jet * beat(t) * 210 + (t > 22 ? 4 : 0))));
@@ -772,7 +782,7 @@ function hud(t) {
   for (const k in asmEls) asmEls[k].classList.toggle('on', sec.b === k);
   for (const k in disEls) disEls[k].classList.toggle('on', flag(k));
   const want = flag('LABELS') ? (LABELS[sec.lab] || LABELS.all) : [];
-  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const rem = remPx;
   tagEl.forEach((e, i) => {
     const l = want[i];
     if (!l) { e.d.style.opacity = 0; e.l.setAttribute('opacity', 0); e.c.setAttribute('opacity', 0); return; }
@@ -791,17 +801,61 @@ function hud(t) {
 }
 
 const euMode = $('euMode'), euSub = $('euSub'), euBar = $('euBar');
-function draw(t, wall) { apply(t, wall); renderer.render(scene, camera); hud(t); }
+let frozen = false, paused = false, rafId = 0;
+let last = performance.now(), lastHud = 0, lastRender = 0;
 
-let last = performance.now();
-function loop(now) {
-  const dt = Math.min(.05, (now - last) / 1000); last = now;
-  if (!frozen) { if (playing && !scrub) playT = (playT + dt) % DUR; draw(playT, now / 1000); }
-  requestAnimationFrame(loop);
+function setPaused(value) {
+  if (paused === value) return;
+  paused = value;
+  if (paused) stopLoop();
+  else startLoop();
 }
-let frozen = false;
+function startLoop() {
+  if (rafId || paused || document.hidden) return;
+  last = performance.now();
+  lastRender = 0;
+  lastHud = 0;
+  rafId = requestAnimationFrame(loop);
+}
+function stopLoop() {
+  if (!rafId) return;
+  cancelAnimationFrame(rafId);
+  rafId = 0;
+}
+function loop(now) {
+  rafId = 0;
+  if (paused || document.hidden) return;
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  if (EMBED && now - lastRender < 33) {
+    rafId = requestAnimationFrame(loop);
+    return;
+  }
+  lastRender = now;
+  if (!frozen) {
+    if (playing && !scrub) playT = (playT + dt) % DUR;
+    apply(playT, now / 1000);
+    renderer.render(scene, camera);
+    if (now - lastHud > (EMBED ? 90 : 72)) {
+      hud(playT);
+      lastHud = now;
+    }
+  }
+  rafId = requestAnimationFrame(loop);
+}
+
+if (EMBED) {
+  addEventListener('message', e => {
+    if (!e.data) return;
+    if (e.data.type === 'poly-lab-pause') setPaused(true);
+    else if (e.data.type === 'poly-lab-resume') setPaused(false);
+  });
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) stopLoop();
+  else startLoop();
+});
 document.fonts.ready.then(() => hud(playT));
-requestAnimationFrame(loop);
+startLoop();
 </script>
 <script src="js/cursor.js"></script>
 </body>
