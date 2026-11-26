@@ -189,6 +189,7 @@ html.embed .embed-ui{
   .eu-bar{left:16px;right:16px;bottom:7px}
 }
 </style>
+<link rel="stylesheet" href="css/cursor.css">
 </head>
 <body>
 <nav class="site-tabs" aria-label="Разделы сайта">
@@ -263,7 +264,7 @@ html.embed .embed-ui{
         <div><div class="lgh"><span>ПОГРУЖЕНИЕ</span><span id="msg"></span><span>ВСПЛЫТИЕ</span></div>
         <div id="rail" role="slider" tabindex="0" aria-label="Хронология"><div class="b"></div><div id="fill"></div><div id="knob"></div></div>
         <div class="sm"><span id="tc">00:00 / 00:25</span><span>8 ДЕЙСТВИЙ ОПЕРАТОРА</span></div></div></div></section>
-    <div class="bot"><span>POLY · ПОЛЕВОЙ СИМУЛЯТОР · 8 РУК · 1 ОПТИКА · 1 СИФОН</span><span>АРСЕНИЙ СОКОЛОВ · 3D-ЛАБОРАТОРИЯ <b>//////</b></span></div>
+    <div class="bot"><span>POLY · ПОЛЕВОЙ СИМУЛЯТОР · 8 РУК · 1 ОПТИКА · 1 СИФОН</span><span>АРСЕНИЙ СОКОЛОВ · РУМЯНЦЕВ Г. А. · 3D <b>//////</b></span></div>
   </div>
 </main>
 
@@ -326,7 +327,9 @@ const secAt = t => { let s = SECT[0]; for (const x of SECT) if (t >= x.t) s = x;
 
 /* ---------- renderer ---------- */
 const canvas = $('gl');
-const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, powerPreference:'high-performance'});
+const COARSE = matchMedia('(pointer: coarse)').matches;
+const DPR_MAX = COARSE ? 1.35 : 1.5;
+const renderer = new THREE.WebGLRenderer({canvas, antialias:!COARSE, alpha:true, powerPreference:'high-performance'});
 renderer.setClearColor(0, 0);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NeutralToneMapping;
@@ -342,7 +345,7 @@ const camera = new THREE.PerspectiveCamera(26, 1, .1, 120);
 const key = new THREE.DirectionalLight(0xffffff, 2.3);
 key.position.set(5, 11, 8);
 key.castShadow = true;
-key.shadow.mapSize.set(2048, 2048);
+key.shadow.mapSize.set(1024, 1024);
 Object.assign(key.shadow.camera, {left:-8, right:8, top:8, bottom:-8, near:1, far:40});
 key.shadow.bias = -.0006; key.shadow.normalBias = .02; key.shadow.radius = 5;
 scene.add(key, key.target);
@@ -545,7 +548,7 @@ function poseArms(S, t) {
 const armMark = new THREE.Object3D(); jf.add(armMark); anchors.armLink = armMark;
 
 /* ---------- wake + stage ---------- */
-const BUB = 90;
+const BUB = 64;
 const bubMat = new THREE.MeshPhysicalMaterial({color:0xffffff, roughness:.1, transparent:true, opacity:.5, envMapIntensity:1.6});
 const bubbles = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 12, 10), bubMat, BUB);
 bubbles.frustumCulled = false; bubbles.renderOrder = 6; scene.add(bubbles);
@@ -634,7 +637,7 @@ let W = 1, H_ = 1;
 function resize() {
   W = canvas.clientWidth || window.innerWidth;
   H_ = canvas.clientHeight || window.innerHeight;
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, DPR_MAX));
   renderer.setSize(W, H_, false);
   camera.aspect = W / H_; camera.updateProjectionMatrix();
   leaders.setAttribute('viewBox', `0 0 ${W} ${H_}`);
@@ -800,5 +803,6 @@ let frozen = false;
 document.fonts.ready.then(() => hud(playT));
 requestAnimationFrame(loop);
 </script>
+<script src="js/cursor.js"></script>
 </body>
 </html>

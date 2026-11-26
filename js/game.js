@@ -1,6 +1,6 @@
 /* =========================================================
    "Свет в кадре" — a small lighting puzzle
-   Author: Arseniy Sokolov
+   Authors: Arseniy Sokolov, G. A. Rumyantsev
    ========================================================= */
 
 (function () {
@@ -82,18 +82,20 @@
 
   let playerRenderer;
   let refRenderer;
+  const COARSE = window.matchMedia('(pointer: coarse)').matches;
+  const DPR_MAX = COARSE ? 1.35 : 1.5;
 
   try {
     playerRenderer = new THREE.WebGLRenderer({
       canvas: canvas,
       alpha: true,
-      antialias: true,
+      antialias: !COARSE,
       powerPreference: 'high-performance'
     });
     refRenderer = new THREE.WebGLRenderer({
       canvas: refCanvas,
       alpha: true,
-      antialias: true,
+      antialias: false,
       powerPreference: 'high-performance'
     });
   } catch (err) {
@@ -574,7 +576,7 @@
     renderer.toneMappingExposure = 0.95;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, DPR_MAX));
   }
 
   function createStudio(withParticles) {
@@ -761,7 +763,7 @@
     const height = stage.clientHeight;
     if (!width || !height) return;
 
-    playerRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    playerRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, DPR_MAX));
     playerRenderer.setSize(width, height, false);
     playerStudio.camera.aspect = width / height;
     playerStudio.camera.updateProjectionMatrix();
@@ -777,7 +779,7 @@
     const height = frame.clientHeight;
     if (!width || !height) return;
 
-    refRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    refRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, DPR_MAX));
     refRenderer.setSize(width, height, false);
     targetStudio.camera.aspect = width / height;
     targetStudio.camera.updateProjectionMatrix();
