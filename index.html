@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>POLY — океаническая робототехника</title>
 <meta name="description" content="POLY — лаборатория океанической робототехники. Medusa JF-4: автономная робо-медуза для инспекции портов, шельфа и подводной инфраструктуры.">
+<meta name="theme-color" content="#2f63ff">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -215,6 +219,7 @@
 
   /* ============ 3. STATS ============ */
   .stats{position:relative;z-index:3;background:transparent;color:var(--ink);}
+  @media (min-width:901px){.stats{box-shadow:0 -34px 80px -70px rgba(14,58,61,.55)}}
   .lab-stats-inner{
     max-width:1440px;margin:0 auto;padding:0 clamp(24px,4.45vw,64px) clamp(72px,8vw,130px);
     display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,.85fr) minmax(0,.85fr);
@@ -813,15 +818,10 @@
   }
 
   /* ---------- live 3D preview ---------- */
-  var labVisible = false, labHidden = false;
-  function setLabHidden(value) {
-    if (labHidden === value) return;
-    labHidden = value;
-    labPlayback();
-  }
+  var labVisible = false;
   function labPlayback() {
     if (!labFrame || !labFrame.contentWindow) return;
-    var type = (labVisible && !labHidden && !document.hidden) ? 'poly-lab-resume' : 'poly-lab-pause';
+    var type = (labVisible && !document.hidden) ? 'poly-lab-resume' : 'poly-lab-pause';
     try { labFrame.contentWindow.postMessage({ type: type }, '*'); } catch (err) {}
   }
   if (labFrame) {
@@ -831,9 +831,10 @@
     });
     if ('IntersectionObserver' in window && labVisual) {
       new IntersectionObserver(function (entries) {
-        labVisible = entries[0].isIntersecting && entries[0].intersectionRatio >= .4;
+        var minRatio = window.innerWidth <= 900 ? .4 : .02;
+        labVisible = entries[0].isIntersecting && entries[0].intersectionRatio >= minRatio;
         labPlayback();
-      }, { threshold: [0, .4, .75] }).observe(labVisual);
+      }, { threshold: [0, .02, .4, .75] }).observe(labVisual);
     } else {
       labVisible = true;
       labPlayback();
@@ -859,7 +860,6 @@
       if (vnav) vnav.style.opacity = '';
       if (labVisual) labVisual.style.opacity = '';
       hero.style.visibility = 'visible';
-      setLabHidden(false);
       return;
     }
 
@@ -868,8 +868,6 @@
     var scroll = window.scrollY || window.pageYOffset || 0;
     if (scroll > wrapH + vh * .15) {
       if (hz) hz.style.display = 'none';
-      hero.style.visibility = 'hidden';
-      setLabHidden(true);
       return;
     }
     var e = (wrapH - scroll) / vh - .47;
@@ -894,9 +892,6 @@
     if (vnav) vnav.style.opacity = (1 - chromeK).toFixed(3);
     if (labVisual) labVisual.style.opacity = (0.45 + 0.55 * clamp(e / .7, 0, 1)).toFixed(3);
 
-    var hide = e < -.06;
-    hero.style.visibility = hide ? 'hidden' : 'visible';
-    setLabHidden(hide);
   }
 
   /* ---------- video / services ---------- */

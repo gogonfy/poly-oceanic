@@ -4,35 +4,40 @@
 .poly-cursor-ring,
 .poly-cursor-dot{position:fixed;left:0;top:0;z-index:2147483646;pointer-events:none;opacity:0;will-change:transform}
 
-.poly-cursor-ring{
-  width:32px;height:32px;margin:-16px 0 0 -16px;border-radius:50%;
-  border:1px solid rgba(47,99,255,.58);
-  background:rgba(255,255,255,.015);
+.poly-cursor-ring{width:32px;height:32px;margin:-16px 0 0 -16px}
+.poly-cursor-ring-visual{
+  position:relative;display:block;width:100%;height:100%;border-radius:50%;
+  border:1px solid rgba(47,99,255,.58);background:rgba(255,255,255,.015);
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.34),0 0 16px rgba(47,99,255,.14);
-  transition:opacity .18s ease,scale .24s cubic-bezier(.2,.7,.2,1),border-color .24s ease,background .24s ease;
+  transform-origin:50% 50%;
+  transition:transform .24s cubic-bezier(.2,.7,.2,1),border-color .24s ease,background .24s ease;
 }
-.poly-cursor-ring::after{
+.poly-cursor-ring-visual::after{
   content:"";position:absolute;right:0;top:5px;width:3px;height:3px;border-radius:50%;
   background:var(--aqua,#46c9bf);box-shadow:0 0 7px rgba(70,201,191,.8);
   transition:transform .28s ease,opacity .28s ease;
 }
-.poly-cursor-dot{
-  width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;
-  background:var(--cobalt,#2f63ff);
+
+.poly-cursor-dot{width:5px;height:5px;margin:-2.5px 0 0 -2.5px}
+.poly-cursor-dot-visual{
+  display:block;width:100%;height:100%;border-radius:50%;background:var(--cobalt,#2f63ff);
   box-shadow:0 0 10px rgba(47,99,255,.78),0 0 2px rgba(255,255,255,.8);
-  transition:opacity .18s ease,scale .2s cubic-bezier(.2,.7,.2,1),background .2s ease;
+  transform-origin:50% 50%;
+  transition:transform .2s cubic-bezier(.2,.7,.2,1),background .2s ease;
 }
 
 .poly-cursor-ring.is-visible,
 .poly-cursor-dot.is-visible{opacity:1}
-.poly-cursor-ring.is-hover{
-  scale:1.58;border-color:rgba(47,99,255,.9);background:rgba(47,99,255,.075);
+.poly-cursor-ring.is-hover .poly-cursor-ring-visual{
+  transform:scale(1.24);border-color:rgba(47,99,255,.9);background:rgba(47,99,255,.075);
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.44),0 0 22px rgba(47,99,255,.22);
 }
-.poly-cursor-ring.is-hover::after{transform:rotate(115deg) translate(1px,-1px);opacity:1}
-.poly-cursor-dot.is-hover{scale:.58;background:#fff}
-.poly-cursor-ring.is-down{scale:.78;border-color:var(--cobalt,#2f63ff);background:rgba(47,99,255,.16)}
-.poly-cursor-dot.is-down{scale:.7}
+.poly-cursor-ring.is-hover .poly-cursor-ring-visual::after{transform:rotate(115deg) translate(1px,-1px);opacity:1}
+.poly-cursor-dot.is-hover .poly-cursor-dot-visual{transform:scale(.58);background:#fff}
+.poly-cursor-ring.is-down .poly-cursor-ring-visual{
+  transform:scale(.78);border-color:var(--cobalt,#2f63ff);background:rgba(47,99,255,.16);
+}
+.poly-cursor-dot.is-down .poly-cursor-dot-visual{transform:scale(.7)}
 
 @media (hover:hover) and (pointer:fine){
   html.has-poly-cursor,
@@ -44,5 +49,6 @@
 }
 
 @media (prefers-reduced-motion:reduce){
-  .poly-cursor-ring,.poly-cursor-dot{transition:none!important}
+  .poly-cursor-ring-visual,
+  .poly-cursor-dot-visual{transition:none!important}
 }
