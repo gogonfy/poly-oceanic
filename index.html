@@ -355,9 +355,22 @@
   .foot-brand{font-family:var(--body);font-weight:700;font-size:20px;letter-spacing:-.04em}
   .foot-brand i{font-style:normal;color:var(--cobalt)}
   .foot-meta{font-family:var(--mono);font-size:9px;line-height:1.9;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.46)}
+  .foot-side{display:flex;flex-direction:column;align-items:flex-end;gap:20px}
   .foot-links{display:flex;flex-wrap:wrap;gap:22px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase}
   .foot-links a{color:#fff;border-bottom:1px solid rgba(255,255,255,.35);padding-bottom:3px;transition:.3s}
   .foot-links a:hover{color:var(--cobalt);border-color:var(--cobalt)}
+  .foot-qr{
+    display:flex;align-items:center;gap:14px;padding:10px 14px 10px 10px;border:1px solid rgba(255,255,255,.14);
+    border-radius:16px;background:rgba(255,255,255,.035);
+  }
+  .foot-qr-card{flex:none;display:block;padding:5px;border-radius:10px;background:#fff;line-height:0;transition:transform .25s ease,box-shadow .25s ease}
+  .foot-qr-card:hover{transform:translateY(-2px);box-shadow:0 14px 32px -18px rgba(0,0,0,.65)}
+  .foot-qr-card img{display:block;width:96px;height:96px;border-radius:5px}
+  .foot-qr-copy{display:grid;gap:6px;min-width:124px;font-family:var(--mono);text-transform:uppercase}
+  .foot-qr-copy span{font-size:7.5px;letter-spacing:.16em;color:rgba(255,255,255,.38)}
+  .foot-qr-copy b{font-family:var(--display);font-weight:500;font-size:19px;line-height:1.02;letter-spacing:.025em;color:#fff}
+  .foot-qr-copy a{justify-self:start;color:var(--aqua);font-size:8px;line-height:1.4;letter-spacing:.1em;border-bottom:1px solid rgba(70,201,191,.4);padding-bottom:2px;transition:color .25s,border-color .25s}
+  .foot-qr-copy a:hover{color:#fff;border-color:#fff}
   .foot-bottom{margin-top:clamp(28px,4vw,56px);display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35)}
 
   /* ============ responsive ============ */
@@ -505,6 +518,9 @@
 
     .site-footer{padding:34px 20px 36px}
     .foot-top{gap:24px}
+    .foot-side{width:100%;align-items:flex-start;gap:18px}
+    .foot-qr{width:100%;justify-content:flex-start}
+    .foot-qr-copy{min-width:0}
     .foot-meta{font-size:8px;line-height:1.8}
     .foot-links{gap:14px 18px;font-size:8.5px;line-height:1.7}
     .foot-bottom{margin-top:26px;flex-direction:column;gap:8px;font-size:7.5px;line-height:1.6;letter-spacing:.08em}
@@ -695,12 +711,24 @@
       <div class="foot-brand">POLY<i>.</i></div>
       <div class="foot-meta">Океаническая робототехника · автономные миссии<br>цифровые двойники · инспекция инфраструктуры</div>
     </div>
-    <div class="foot-links">
-      <a href="#top">Наверх</a>
-      <a href="#about">О лаборатории</a>
-      <a href="#services">Технологии</a>
-      <a href="lab.html">Лаборатория JF-4</a>
-      <a href="game.html">Мини-игра</a>
+    <div class="foot-side">
+      <div class="foot-links">
+        <a href="#top">Наверх</a>
+        <a href="#about">О лаборатории</a>
+        <a href="#services">Технологии</a>
+        <a href="lab.html">Лаборатория JF-4</a>
+        <a href="game.html">Мини-игра</a>
+      </div>
+      <div class="foot-qr">
+        <a class="foot-qr-card" href="assets/media/site-qr.png" download="POLY-site-qr.png" aria-label="Скачать QR-код сайта POLY">
+          <img src="assets/media/site-qr.svg" alt="QR-код сайта POLY" width="96" height="96" loading="lazy" decoding="async">
+        </a>
+        <div class="foot-qr-copy">
+          <span>SCAN / OPEN</span>
+          <b>Сайт<br>на телефоне</b>
+          <a href="assets/media/site-qr.png" download="POLY-site-qr.png">Скачать QR</a>
+        </div>
+      </div>
     </div>
   </div>
   <div class="foot-bottom">
