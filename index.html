@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#2f63ff">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/x-icon" sizes="32x32" href="favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -239,6 +240,7 @@
     text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:8px;
   }
   .ph-tag b{width:5px;height:5px;background:var(--cobalt);display:inline-block}
+  .ph-tag-mobile{display:none}
   .ph.in{clip-path:inset(0)}
   .ph.in img{transform:scale(1)}
   .stats-big{
@@ -283,8 +285,8 @@
   .svc-fallback{
     position:absolute;inset:-2%;z-index:0;pointer-events:none;
     background-color:#07141f;
-    background-image:url("assets/media/medusa-case.jpg");
-    background-position:50% 42%;background-size:cover;background-repeat:no-repeat;
+    background-image:url("assets/media/port-case.webp");
+    background-position:50% 50%;background-size:cover;background-repeat:no-repeat;
   }
   .svc-cover{display:none}
   .svc-case{
@@ -461,6 +463,8 @@
     .stats-pin{display:contents}
     .ph{order:1;width:100%;max-width:none;margin:0;aspect-ratio:16/10;border-radius:16px}
     .ph img{object-position:50% 46%}
+    .ph-tag-desktop{display:none}
+    .ph-tag-mobile{display:flex}
     .stats-intro{order:2;max-width:none;margin-top:24px;padding-top:0;font-size:14.5px;line-height:1.55;opacity:1;transform:none}
     .stats-intro p{margin-bottom:1.1em}
     .stats-big{order:3;margin-top:34px;font-size:clamp(34px,11.4vw,52px);line-height:1;letter-spacing:.012em}
@@ -601,8 +605,12 @@
   <div class="lab-stats-inner">
     <div class="stats-pin">
       <div class="ph" id="statsPhoto">
-        <img src="assets/media/medusa-case.jpg" alt="Робо-медуза Medusa JF-4 крупным планом: купол, оптика и механика рук" width="1400" height="750" loading="lazy" decoding="async">
-        <span class="ph-tag"><b></b>MEDUSA JF-4 · FIELD TEST</span>
+        <picture>
+          <source media="(min-width:901px)" srcset="assets/media/port-case.webp" type="image/webp">
+          <img src="assets/media/medusa-case.jpg" alt="Кейс POLY: портовая инфраструктура и робо-медуза Medusa JF-4" width="1400" height="750" loading="lazy" decoding="async">
+        </picture>
+        <span class="ph-tag ph-tag-desktop"><b></b>CASE 01 · PORT INSPECTION</span>
+        <span class="ph-tag ph-tag-mobile"><b></b>MEDUSA JF-4 · FIELD TEST</span>
       </div>
       <h2 class="stats-big" id="statsTitle">
         <span class="ln">Мы строим</span>
@@ -1032,14 +1040,15 @@
     seekTarget = q * (videoDuration - .02);
     requestSeek();
 
-    var b = ease(clamp((progress - .6) / .4, 0, 1));
+    var bandProgress = ease(clamp((progress - .08) / .44, 0, 1));
+    var stripProgress = ease(clamp((progress - .08) / .92, 0, 1));
     if (svcFallback) {
       svcFallback.style.transform = 'scale(' + (1.015 + q * .07).toFixed(3) + ') translateY(' + (q * 1.4).toFixed(2) + '%)';
     }
-    if (band) band.style.transform = 'translateY(' + ((1 - b) * 100).toFixed(2) + '%)';
-    var sx = vw - b * (stripW + 64);
+    if (band) band.style.transform = 'translateY(' + ((1 - bandProgress) * 100).toFixed(2) + '%)';
+    var sx = vw - stripProgress * (stripW + 64);
     if (strip) strip.style.transform = 'translate3d(' + sx.toFixed(2) + 'px,0,0)';
-    var gx = vw - b * (giantW + vw);
+    var gx = vw - stripProgress * (giantW + vw);
     if (giant) giant.style.transform = 'translate3d(' + gx.toFixed(2) + 'px,0,0)';
     scene.classList.toggle('on', progress > .9);
   }
